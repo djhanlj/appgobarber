@@ -14,6 +14,9 @@ import * as Yup from 'yup';
 
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+
+import { useAuth } from '../../hooks/auth';
+
 import getValidationErrors from '../../utils/getValidationErrors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -37,6 +40,10 @@ const SigIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
   const passwordInputRef = useRef<TextInput>(null);
+  const { signIn, user } = useAuth();
+
+  console.log(user);
+
   const handleSignIn = useCallback(async (data: SignInFormData) => {
     try {
       formRef.current?.setErrors({});
@@ -52,10 +59,10 @@ const SigIn: React.FC = () => {
         abortEarly: false,
       });
 
-      // await signIn({
-      //   email: data.email,
-      //   password: data.password,
-      // });
+      await signIn({
+        email: data.email,
+        password: data.password,
+      });
 
       // history.push('/dashboard');
     } catch (err) {
@@ -72,7 +79,7 @@ const SigIn: React.FC = () => {
         'Ocorreu um erro ao fazer login, cheque as credenciais.',
       );
     }
-  }, []);
+  }, [signIn]);
 
   return (
     <>
@@ -91,7 +98,7 @@ const SigIn: React.FC = () => {
               <Title>Faça seu logon</Title>
             </View>
             <Form ref={formRef} onSubmit={handleSignIn}>
-            <Input
+              <Input
                 autoCorrect={false}
                 autoCapitalize="none"
                 keyboardType="email-address"
